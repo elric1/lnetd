@@ -44,7 +44,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 
-#define CHECK_TIME	1
+#define CHECK_TIME	60
 #define MAXLOGLEN	1024
 
 struct lnetd_ctx;
