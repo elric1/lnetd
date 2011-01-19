@@ -20,6 +20,9 @@ clean:
 	rm -f lnetd lnetd.o lnetd.0
 
 install:
+	mkdir -p			$(DESTDIR)/$(PREFIX)/sbin
+	mkdir -p			$(DESTDIR)/$(PREFIX)/man/man1
+	mkdir -p			$(DESTDIR)/$(PREFIX)/man/cat1
 	install -c -m755 lnetd		$(DESTDIR)/$(PREFIX)/sbin
 	install -c -m644 lnetd.1	$(DESTDIR)/$(PREFIX)/man/man1/
 	install -c -m644 lnetd.0	$(DESTDIR)/$(PREFIX)/man/cat1/
