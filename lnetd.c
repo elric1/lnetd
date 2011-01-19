@@ -453,7 +453,6 @@ setup_socket(struct lnetd_ctx *ctx)
 
 	/* do the bind dance... */
 	/* XXXrcd: ensure that it is small enough... */
-	/* XXXrcd: we should create and rename the socket. */
 #ifdef HAS_SUN_LEN
 	un.sun_len = strlen(tmppath) + 1;
 #endif
