@@ -282,18 +282,22 @@ lnetd_setup(struct lnetd_ctx *ctx)
 }
 
 static void
-start_kid(struct lnetd_ctx *ctx)
+start_kid(struct lnetd_ctx *ctx, int fd)
 {
 	int	  ret;
 
-	ret = dup2(ctx->fd, 0);
-	if (ret == -1) {
-		lnetd_log(ctx, LOG_ERR, "dup2 failed: %s", strerror(errno));
-		_exit(0);
+	if (fd != 0) {
+		ret = dup2(fd, 0);
+		if (ret == -1) {
+			lnetd_log(ctx, LOG_ERR, "dup2 failed: %s",
+			    strerror(errno));
+			_exit(0);
+		}
+		close(fd);
 	}
 
-	if (ctx->fd > 0)
-		close(ctx->fd);
+	dup2(0, 1);
+	dup2(0, 2);
 
 	/* XXXrcd: deal with close-on-exec flags? */
 
@@ -309,14 +313,14 @@ start_kid(struct lnetd_ctx *ctx)
  */
 
 static int
-make_kid(struct lnetd_ctx *ctx)
+make_kid(struct lnetd_ctx *ctx, int fd)
 {
 	pid_t	pid;
 
 	pid = fork();
 	switch (pid) {
 	case 0:
-		start_kid(ctx);
+		start_kid(ctx, fd);
 		exit(0);
 	case -1:
 		lnetd_log(ctx, LOG_ERR, "fork failed: %s", strerror(errno));
@@ -359,6 +363,7 @@ main_loop(struct lnetd_ctx *ctx)
 {
 	struct timeval	tv;
 	fd_set		fds;
+	int		fd = -1;
 	int		status;
 	int		ret;
 
@@ -386,23 +391,26 @@ main_loop(struct lnetd_ctx *ctx)
 		while (waitpid(-1, &status, WNOHANG) > 0)
 			ctx->num_kids--;
 
-		FD_ZERO(&fds);
-		FD_SET(ctx->fd, &fds);
+		if (ctx->wait_service) {
+			FD_ZERO(&fds);
+			FD_SET(ctx->fd, &fds);
 
-		tv.tv_sec = CHECK_TIME;
-		tv.tv_usec = 0;
-		ret = select(ctx->fd+1, &fds, NULL, NULL, &tv);
+			tv.tv_sec = CHECK_TIME;
+			tv.tv_usec = 0;
+			ret = select(ctx->fd+1, &fds, NULL, NULL, &tv);
+		} else {
+			alarm(CHECK_TIME);
+			ret = fd = accept(ctx->fd, NULL, NULL);
+			alarm(0);
+		}
 
 		switch (ret) {
+		case -1:	/* ignore errors... */
 		case 0:
 			break;
 
-		case -1:
-			/* XXXrcd: Hmmmm */
-			return;
-
 		default:
-			ctx->num_kids += make_kid(ctx);
+			ctx->num_kids += make_kid(ctx, fd);
 			break;
 		}
 	}
@@ -515,12 +523,6 @@ main(int argc, char **argv)
 	if (!lnetd_process_args(ctx, argc, argv)) {
 		/* the argument processing routine will emit errors */
 		exit(1);
-	}
-
-	if (ctx->wait_service != 1) {
-		fprintf(stderr, "Only wait services are implemented, -w "
-		    "must be specified.\n");
-		lnetd_usage(ctx);
 	}
 
 	if ((ctx->fd = setup_socket(ctx)) < 0)
