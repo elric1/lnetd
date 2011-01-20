@@ -398,6 +398,7 @@ main_loop(struct lnetd_ctx *ctx)
 			tv.tv_sec = CHECK_TIME;
 			tv.tv_usec = 0;
 			ret = select(ctx->fd+1, &fds, NULL, NULL, &tv);
+			fd = ctx->fd;
 		} else {
 			alarm(CHECK_TIME);
 			ret = fd = accept(ctx->fd, NULL, NULL);
