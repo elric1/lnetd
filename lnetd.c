@@ -368,17 +368,10 @@ main_loop(struct lnetd_ctx *ctx)
 	int		ret;
 
 	for (;;) {
-		if (die_now) {			/* I've been told to die. */
-			killpg(0, SIGHUP);	/* Kill the kids */
-			break;			/* Go home */
+		if (die_now || !is_socket_mine(ctx)) {	/* I need to die */
+			killpg(0, SIGHUP);		/* Kill the kids */
+			break;				/* Go home */
 		}
-
-		/*
-		 * If our socket has been replaced then no one can
-		 * connect to us and we simply exit.
-		 */
-		if (!is_socket_mine(ctx))
-			break;
 
 		if (ctx->num_kids >= ctx->max_kids) {
 			alarm(CHECK_TIME);
