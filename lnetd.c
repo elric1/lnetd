@@ -286,6 +286,8 @@ start_kid(struct lnetd_ctx *ctx, int fd)
 {
 	int	  ret;
 
+	lnetd_log(ctx, LOG_INFO, "starting %s", ctx->kid_prognam);
+
 	if (fd != 0) {
 		ret = dup2(fd, 0);
 		if (ret == -1) {
@@ -301,7 +303,6 @@ start_kid(struct lnetd_ctx *ctx, int fd)
 
 	/* XXXrcd: deal with close-on-exec flags? */
 
-	lnetd_log(ctx, LOG_INFO, "starting %s", ctx->kid_prognam);
 	execv(ctx->kid_prognam, ctx->kid_args);
 
 	lnetd_log(ctx, LOG_ERR, "execv failed: %s", strerror(errno));
