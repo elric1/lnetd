@@ -1,8 +1,9 @@
 #
 # main Makefile
 
-PREFIX ?= /usr/local
-NROFF  ?= nroff
+DESTDIR	?= /
+PREFIX	?= /usr
+NROFF	?= nroff
 
 #
 # XXXrcd: enable these flags when developing using gcc.  I turn them
