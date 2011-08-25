@@ -22,9 +22,9 @@ clean:
 	rm -f lnetd lnetd.o lnetd.0
 
 install:
-	mkdir -p			$(DESTDIR)/$(PREFIX)/sbin
-	mkdir -p			$(DESTDIR)/$(PREFIX)/man/man8
-	mkdir -p			$(DESTDIR)/$(PREFIX)/man/cat8
+	umask 022 && mkdir -p		$(DESTDIR)/$(PREFIX)/sbin
+	umask 022 && mkdir -p		$(DESTDIR)/$(PREFIX)/man/man8
+	umask 022 && mkdir -p		$(DESTDIR)/$(PREFIX)/man/cat8
 	install -c -m755 lnetd		$(DESTDIR)/$(PREFIX)/sbin
 	install -c -m644 lnetd.8	$(DESTDIR)/$(PREFIX)/man/man8/
 	install -c -m644 lnetd.0	$(DESTDIR)/$(PREFIX)/man/cat8/
