@@ -1,0 +1,34 @@
+LNETD
+=====
+
+Quick Description
+-----------------
+
+Lnetd is a small program which will bind to a UNIX domain socket
+and spawn children in the same way as inetd(8).
+
+For more documentation, please refer to the master site:
+http://oskt.secure-endpoints.com/lnetd.html[LNETD].
+
+Building
+--------
+
+To build, just pull it down and run make:
+
+......................................................................
+	$ git clone http://imrryr.org/git/lnetd
+	$ cd lnetd
+	$ make
+......................................................................
+
+You can also clone it from github.com.
+
+Authors
+-------
+
+Roland C. Dowdeswell.
+
+License
+-------
+
+Lnetd is provided under a BSD/MIT style license.
