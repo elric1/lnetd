@@ -454,7 +454,7 @@ setup_socket(struct lnetd_ctx *ctx)
 	un.sun_family = AF_UNIX;
 	strcpy(un.sun_path, tmppath);
 
-	old_umask = umask(0);
+	old_umask = umask(0777);
 	ret = bind(fd, (struct sockaddr *)&un, sizeof(un));
 	umask(old_umask);
 	if (ret) {
