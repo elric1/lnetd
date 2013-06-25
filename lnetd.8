@@ -33,6 +33,7 @@
 .Op Fl g Ar sockgroup
 .Op Fl m Ar sockmode
 .Op Fl u Ar sockuser
+.Ar socket_path
 .Ar program
 .Op Ar args ...
 .Sh DESCRIPTION
@@ -51,14 +52,14 @@ This value defaults to 10.
 .It Fl d
 turns on debugging.
 .It Fl g Ar group
-indicates that the socket which is created should have group
+indicates that the socket_path which is created should have group
 .Ar group .
 This option is only available to the super-user.
 .It Fl m Ar mode
-indicates that the socket which is created should have mode
+indicates that the socket_path which is created should have mode
 .Ar mode .
 .It Fl u Ar user
-indicates that the socket which is created should be owned by
+indicates that the socket_path which is created should be owned by
 .Ar user .
 This option is only available to the super-user.
 .It Fl w
