@@ -202,13 +202,14 @@ lnetd_process_args(struct lnetd_ctx *ctx, int argc,
 	 *         Hmmm.  Maybe just always be a daemon?
 	 */
 
-	while ((ch = getopt(argc, argv, POS "?N:g:m:u:w")) != -1)
+	while ((ch = getopt(argc, argv, POS "?N:g:m:u:wd")) != -1)
 		switch (ch) {
 		case 'N':
 			ctx->max_kids = atoi(optarg);
 			break;
 		case 'd':
 			ctx->debug = 1;
+			ctx->daemonise = 0;
 			break;
 		case 'g':
 			ctx->sockgid = parse_gid(ctx, optarg);
@@ -328,6 +329,8 @@ make_kid(struct lnetd_ctx *ctx, int fd)
 		sleep(1);	/* back off */
 		return 0;	/* not much to do but continue... */
 	default:
+		if (!ctx->wait_service)
+			close(fd);
 		break;
 	}
 	return 1;
@@ -445,6 +448,14 @@ setup_socket(struct lnetd_ctx *ctx)
 		perror("socket");
 		return -1;
 	}
+
+#ifdef O_CLOEXEC
+	if (!ctx->wait_service) {
+		long fdflags;
+		fdflags = fcntl(fd, F_GETFD);
+		fcntl(fd, F_SETFD, fdflags | O_CLOEXEC);
+	}
+#endif
 
 	/* do the bind dance... */
 	/* XXXrcd: ensure that it is small enough... */
