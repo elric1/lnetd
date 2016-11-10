@@ -1,3 +1,11 @@
+lnetd (0.2) unstable; urgency=low
+
+  * Fix creation umask
+  * Fix fildes leak and debug option
+  * Update man page
+
+ -- Roland C. Dowdeswell <roland.dowdeswell@imrryr.org>  Thu, 10 Nov 2016 15:52:39 +0100
+
 lnetd (0.1-1) unstable; urgency=low
 
   * Initial release
